@@ -1,10 +1,9 @@
-import java.lang.reflect.Array;
 import java.util.*;
 
 class OXOModel
 {
-    private ArrayList<ArrayList<OXOPlayer>> cells;
-    private ArrayList<OXOPlayer> players;
+    private final ArrayList<ArrayList<OXOPlayer>> cells;
+    private final ArrayList<OXOPlayer> players;
     private OXOPlayer currentPlayer;
     private OXOPlayer winner;
     private boolean gameDrawn;
@@ -12,14 +11,16 @@ class OXOModel
 
     public OXOModel(int numberOfRows, int numberOfColumns, int winThresh)
     {
-        winThreshold = winThresh;
-        cells = new ArrayList<ArrayList<OXOPlayer>>();
+        setWinThreshold(winThresh);
+        cells = new ArrayList<>();
         for (int i = 0; i < numberOfRows; i++) {
-            ArrayList<OXOPlayer> newCell = new ArrayList<OXOPlayer>(numberOfColumns);
-            for (int j = 0; j < numberOfColumns; j++) newCell.add(null);
+            ArrayList<OXOPlayer> newCell = new ArrayList<>(numberOfColumns);
+            for (int j = 0; j < numberOfColumns; j++) {
+                newCell.add(null);
+            }
             cells.add(newCell);
         }
-        players = new ArrayList<OXOPlayer>();
+        players = new ArrayList<>();
     }
 
     public int getNumberOfPlayers()
@@ -62,19 +63,30 @@ class OXOModel
         return cells.size();
     }
 
+    public ArrayList<OXOPlayer> getRow(int rowNumber)
+    {
+        return cells.get(rowNumber);
+    }
+
     public int getNumberOfColumns()
     {
         int cnt = 0;
-        for (int i = 0; i < cells.size(); i++) {
-            if (cells.get(i).size() > cnt) cnt = cells.get(i).size();
+
+        for (ArrayList<OXOPlayer> cell : cells) {
+            if (cell.size() > cnt) {
+                cnt = cell.size();
+            }
         }
         return cnt;
     }
 
     public OXOPlayer getCellOwner(int rowNumber, int colNumber)
     {
-        if ((rowNumber < this.getNumberOfRows() - 1) || (colNumber > cells.get(rowNumber).size() - 1)) return null;
-        else return cells.get(rowNumber).get(colNumber);
+        if ((rowNumber > this.getNumberOfRows() - 1 || (colNumber > cells.get(rowNumber).size() - 1))) {
+            return null;
+        } else {
+            return cells.get(rowNumber).get(colNumber);
+        }
     }
 
     public void setCellOwner(int rowNumber, int colNumber, OXOPlayer player)

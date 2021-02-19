@@ -14,7 +14,7 @@ public class OXOMoveException extends Exception
         rowNumber = row;
         columnNumber = column;
     }
-    
+
     protected int getRow()
     {
         return rowNumber;
