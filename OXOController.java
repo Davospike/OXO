@@ -30,7 +30,7 @@ class OXOController
             columns = Character.getNumericValue(command.charAt(1)) - 1;
         }
 
-        if (!gameModel.isGameDrawn() || gameModel.getWinner() == null) {
+        if (!gameModel.isGameDrawn() || gameModel.getWinner() == null) { // Attempting to make it so no input can be entered once the game is won/tied
             executeGame(rows, columns);
         }
     }
