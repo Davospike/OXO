@@ -9,45 +9,55 @@ class OXOController
     {
         gameModel = model;
         playerTurnCount = 0;
-
         gameModel.setCurrentPlayer(gameModel.getPlayerByNumber(playerTurnCount));
     }
 
     public void handleIncomingCommand(String command) throws OXOMoveException
     {
-        if (command.length() != 2 || !Character.isLetter(command.charAt(0)) || !Character.isDigit(command.charAt(1))) {
-            System.out.println("Error: Invalid argument");
-        }
-        int rows = Character.getNumericValue(command.charAt(0)) - Character.getNumericValue('a');
-        int columns = Character.getNumericValue(command.charAt(1)) - 1;
+        int rows;
+        int columns;
 
-        if (rows >= gameModel.getNumberOfRows() || columns >= gameModel.getNumberOfColumns()) {
-            System.out.println("Error: Invalid cell");
-        }
-        if (gameModel.getCellOwner(rows, columns) != null) {
-            System.out.println("Error: Cell taken");
+        command = command.toLowerCase();
+
+        if (command.length() != 2) {
+            throw new OXOMoveException(); // CHANGE TO CORRECT EXCEPTION - invalid identifier
+        } else if (!Character.isLetter(command.charAt(0))) {
+            throw new OXOMoveException(); // CHANGE TO CORRECT EXCEPTION - invalid identifier character
+        } else if (!Character.isDigit(command.charAt(1))) {
+            throw new OXOMoveException(); // CHANGE TO CORRECT EXCEPTION - invalid identifier length
+        } else {
+            rows = Character.getNumericValue(command.charAt(0)) - Character.getNumericValue('a');
+            columns = Character.getNumericValue(command.charAt(1)) - 1;
         }
 
-        gameModel.setCellOwner(rows, columns, gameModel.getCurrentPlayer());
-
-        if (checkWinState(rows, columns)) {
-            gameModel.setWinner(gameModel.getCurrentPlayer());
+        if (!gameModel.isGameDrawn() || gameModel.getWinner() == null) {
+            executeGame(rows, columns);
         }
-        if (checkDrawState()) {
-            gameModel.setGameDrawn();
-        }
-        nextPlayer();
-
     }
 
-    private void nextPlayer()
+    private void executeGame (int rows, int columns) throws OXOMoveException
     {
-        if (gameModel.getCurrentPlayer() != gameModel.getPlayerByNumber(gameModel.getNumberOfPlayers()-1)) {
-            playerTurnCount++;
+        if (rows < gameModel.getNumberOfRows() && columns < gameModel.getNumberOfColumns()) {
+            if (gameModel.getCellOwner(rows, columns) == null) {
+                gameModel.setCellOwner(rows, columns, gameModel.getCurrentPlayer());
+                if (checkWinState(rows, columns)) {
+                    gameModel.setWinner(gameModel.getCurrentPlayer());
+                } else if (checkDrawState()) {
+                    gameModel.setGameDrawn();
+                } else {
+                    if (gameModel.getCurrentPlayer() != gameModel.getPlayerByNumber(gameModel.getNumberOfPlayers()-1)) {
+                        playerTurnCount++;
+                    } else {
+                        playerTurnCount = 0;
+                    }
+                    gameModel.setCurrentPlayer(gameModel.getPlayerByNumber(playerTurnCount));
+                }
+            } else {
+                throw new OXOMoveException(); // CHANGE TO CORRECT EXCEPTION - cell already taken
+            }
         } else {
-            playerTurnCount = 0;
+            throw new OXOMoveException(); // CHANGE TO CORRECT EXCEPTION - outside cell range
         }
-        gameModel.setCurrentPlayer(gameModel.getPlayerByNumber(playerTurnCount));
     }
 
     // CHANGE BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!

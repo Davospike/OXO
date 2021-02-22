@@ -13,6 +13,7 @@ class OXOModel
     {
         setWinThreshold(winThresh);
         cells = new ArrayList<>();
+
         for (int i = 0; i < numberOfRows; i++) {
             ArrayList<OXOPlayer> newCell = new ArrayList<>(numberOfColumns);
             for (int j = 0; j < numberOfColumns; j++) {
