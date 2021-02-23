@@ -67,26 +67,25 @@ class OXOController
 
     private boolean checkWinRowCol(int rows, int columns)
     {
-        int matches;
+        int matches = 0;
 
-        //Check Rows
-        matches = 0;
-        for (int i = 0; i < gameModel.getNumberOfRows(); i++) {
-            if (gameModel.getRow(rows).get(i) == gameModel.getCurrentPlayer()) {
-                if (++matches == gameModel.getWinThreshold()) return true;
-            } else {
+        // Rows
+        int turns = 0;
+        while (turns < gameModel.getNumberOfRows()) {
+            if (gameModel.getRow(rows).get(turns) != gameModel.getCurrentPlayer()) {
                 matches = 0;
-            }
+            } else if (++matches == gameModel.getWinThreshold()) return true;
+            turns++;
         }
 
-        //Check Columns
+        // Columns
         matches = 0;
-        for (int i = 0; i < gameModel.getNumberOfColumns(); i++) {
-            if (gameModel.getRow(i).get(columns) == gameModel.getCurrentPlayer()) {
-                if (++matches == gameModel.getWinThreshold()) return true;
-            } else {
+        turns = 0;
+        while (turns < gameModel.getNumberOfColumns()) {
+            if (gameModel.getRow(turns).get(columns) != gameModel.getCurrentPlayer()) {
                 matches = 0;
-            }
+            } else if (++matches == gameModel.getWinThreshold()) return true;
+            turns++;
         }
         return false;
     }
@@ -94,30 +93,33 @@ class OXOController
     private boolean checkWinDiagonal(int rows, int columns)
     {
         int matches;
-        int squareSize;
+        int squareSize = Math.min(gameModel.getNumberOfColumns(),gameModel.getNumberOfRows());
 
-        //Check Diagonal
-        squareSize = Math.min(gameModel.getNumberOfColumns(),gameModel.getNumberOfRows());
+        //Diagonal
         matches = 0;
         if (columns == rows) {
-            for (int i = 0; i < squareSize; i++) {
-                if (gameModel.getRow(i).get(i) == gameModel.getCurrentPlayer()) {
+            int turns = 0;
+            while (turns < squareSize) {
+                if (gameModel.getRow(turns).get(turns) == gameModel.getCurrentPlayer()) {
                     if (++matches == gameModel.getWinThreshold()) return true;
                 } else {
                     matches = 0;
                 }
+                turns++;
             }
         }
 
-        //Check Anti-Diagonal
+        //Anti-Diagonal
         matches = 0;
         if (columns+rows == squareSize-1) {
-            for (int i = 0; i < squareSize; i++) {
-                if (gameModel.getRow(i).get((squareSize-1)-i) == gameModel.getCurrentPlayer()) {
+            int turns = 0;
+            while (turns < squareSize) {
+                if (gameModel.getRow(turns).get((squareSize-1) - turns) == gameModel.getCurrentPlayer()) {
                     if (++matches == gameModel.getWinThreshold()) return true;
                 } else {
                     matches = 0;
                 }
+                turns++;
             }
         }
         return false;
