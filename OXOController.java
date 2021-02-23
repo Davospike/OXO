@@ -1,14 +1,18 @@
 import OXOExceptions.*;
 
+import java.util.stream.IntStream;
+
 class OXOController
 {
     OXOModel gameModel;
-    private int playerTurnCount, matches = 0, turns = 0;
+    private int playerTurnCount, playerTotal, gridSize;
 
     public OXOController(OXOModel model)
     {
         gameModel = model;
         playerTurnCount = 0;
+        playerTotal = gameModel.getNumberOfPlayers();
+        gridSize = gameModel.getNumberOfRows() * gameModel.getNumberOfColumns();
         gameModel.setCurrentPlayer(gameModel.getPlayerByNumber(playerTurnCount));
     }
 
@@ -45,10 +49,10 @@ class OXOController
                 } else if (checkDrawState()) {
                     gameModel.setGameDrawn();
                 } else {
-                    if (gameModel.getCurrentPlayer() != gameModel.getPlayerByNumber(gameModel.getNumberOfPlayers()-1)) {
-                        playerTurnCount++;
-                    } else {
+                    if (gameModel.getCurrentPlayer() == gameModel.getPlayerByNumber(gameModel.getNumberOfPlayers() - 1)) {
                         playerTurnCount = 0;
+                    } else {
+                        playerTurnCount++;
                     }
                     gameModel.setCurrentPlayer(gameModel.getPlayerByNumber(playerTurnCount));
                 }
@@ -60,6 +64,12 @@ class OXOController
         }
     }
 
+    private boolean checkDrawState()
+    {
+        return IntStream.range(0, gameModel.getNumberOfRows()).noneMatch(i ->
+               IntStream.range(0, gameModel.getNumberOfColumns()).anyMatch(j -> gameModel.getCellOwner(i, j) == null));
+    }
+
     private boolean checkWinState(int rows, int columns)
     {
         return (checkWinRow(rows) || checkWinCol(columns) || checkWinDiagonal(rows, columns) ||
@@ -68,21 +78,34 @@ class OXOController
 
     private boolean checkWinRow(int rows)
     {
-        while (turns < gameModel.getNumberOfRows()) {
-            if (gameModel.getRow(rows).get(turns) != gameModel.getCurrentPlayer()) {
+        int rowCnt = 0, matches = 0;
+
+        while (rowCnt < gameModel.getNumberOfRows()) {
+            if (gameModel.getRow(rows).get(rowCnt) == gameModel.getCurrentPlayer()) {
+                if (++matches == gameModel.getWinThreshold()) {
+                    return true;
+                }
+            } else {
                 matches = 0;
-            } else if (++matches == gameModel.getWinThreshold()) return true;
-            turns++;
+            }
+            rowCnt++;
         }
         return false;
     }
 
-    private boolean checkWinCol(int columns) {
-        while (turns < gameModel.getNumberOfColumns()) {
-            if (gameModel.getRow(turns).get(columns) != gameModel.getCurrentPlayer()) {
+    private boolean checkWinCol(int columns)
+    {
+        int colCnt = 0, matches = 0;
+
+        while (colCnt < gameModel.getNumberOfColumns()) {
+            if (gameModel.getRow(colCnt).get(columns) == gameModel.getCurrentPlayer()) {
+                if (++matches == gameModel.getWinThreshold()) {
+                    return true;
+                }
+            } else {
                 matches = 0;
-            } else if (++matches == gameModel.getWinThreshold()) return true;
-            turns++;
+            }
+            colCnt++;
         }
         return false;
     }
@@ -90,12 +113,15 @@ class OXOController
     private boolean checkWinDiagonal(int rows, int columns)
     {
         int squareSize = Math.min(gameModel.getNumberOfColumns(), gameModel.getNumberOfRows());
+        int turns, matches = 0;
 
         if (columns == rows) {
-            int turns = 0;
+            turns = 0;
             while (turns < squareSize) {
                 if (gameModel.getRow(turns).get(turns) == gameModel.getCurrentPlayer()) {
-                    if (++matches == gameModel.getWinThreshold()) return true;
+                    if (++matches == gameModel.getWinThreshold()) {
+                        return true;
+                    }
                 } else {
                     matches = 0;
                 }
@@ -108,12 +134,15 @@ class OXOController
     private boolean checkWinAntiDiagonal(int rows, int columns)
     {
         int squareSize = Math.min(gameModel.getNumberOfColumns(), gameModel.getNumberOfRows());
+        int turns, matches = 0;
 
         if (columns + rows == squareSize - 1) {
-            int turns = 0;
+            turns = 0;
             while (turns < squareSize) {
                 if (gameModel.getRow(turns).get((squareSize - 1) - turns) == gameModel.getCurrentPlayer()) {
-                    if (++matches == gameModel.getWinThreshold()) return true;
+                    if (++matches == gameModel.getWinThreshold()) {
+                        return true;
+                    }
                 } else {
                     matches = 0;
                 }
@@ -121,15 +150,5 @@ class OXOController
             }
         }
         return false;
-    }
-
-    private boolean checkDrawState()
-    {
-        for (int i = 0; i < gameModel.getNumberOfRows(); i++) {
-            for (int j = 0; j < gameModel.getNumberOfColumns(); j++) {
-                if (gameModel.getCellOwner(i,j) == null) return false;
-            }
-        }
-        return true;
     }
 }
