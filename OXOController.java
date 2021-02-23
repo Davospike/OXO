@@ -44,10 +44,10 @@ class OXOController
         if (rows < gameModel.getNumberOfRows() && columns < gameModel.getNumberOfColumns()) {
             if (gameModel.getCellOwner(rows, columns) == null) {
                 gameModel.setCellOwner(rows, columns, gameModel.getCurrentPlayer());
-                if (checkDrawState()) {
-                    gameModel.setGameDrawn();
-                } else if (checkWinState(rows, columns)) {
+                if (checkWinState(rows, columns)) {
                     gameModel.setWinner(gameModel.getCurrentPlayer());
+                } else if (checkDrawState()) {
+                    gameModel.setGameDrawn();
                 } else {
                     if (gameModel.getCurrentPlayer() == gameModel.getPlayerByNumber(gameModel.getNumberOfPlayers() - 1)) {
                         playerTurnCount = 0;
@@ -78,32 +78,36 @@ class OXOController
 
     private boolean checkWinRow(int rows)
     {
-        int rowCnt = 0, matches = 0;
+        int matches = 0;
 
-        for (int i = 0; i < gameModel.getNumberOfRows(); i++) {
-            if (gameModel.getRow(rows).get(i) != gameModel.getCurrentPlayer()) {
+        int rowCnt = 0;
+        while (rowCnt < gameModel.getNumberOfRows()) {
+            if (gameModel.getRow(rows).get(rowCnt) != gameModel.getCurrentPlayer()) {
                 matches = 0;
             } else {
                 if (++matches == gameModel.getWinThreshold()) {
                     return true;
                 }
             }
+            rowCnt++;
         }
         return false;
     }
 
     private boolean checkWinCol(int columns)
     {
-        int colCnt = 0, matches = 0;
+        int matches = 0;
 
-        for (int i = 0; i < gameModel.getNumberOfColumns(); i++) {
-            if (gameModel.getRow(i).get(columns) != gameModel.getCurrentPlayer()) {
+        int colCnt = 0;
+        while (colCnt < gameModel.getNumberOfColumns()) {
+            if (gameModel.getRow(colCnt).get(columns) != gameModel.getCurrentPlayer()) {
                 matches = 0;
             } else {
                 if (++matches == gameModel.getWinThreshold()) {
                     return true;
                 }
             }
+            colCnt++;
         }
         return false;
     }
