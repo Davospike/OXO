@@ -44,10 +44,10 @@ class OXOController
         if (rows < gameModel.getNumberOfRows() && columns < gameModel.getNumberOfColumns()) {
             if (gameModel.getCellOwner(rows, columns) == null) {
                 gameModel.setCellOwner(rows, columns, gameModel.getCurrentPlayer());
-                if (checkWinState(rows, columns)) {
-                    gameModel.setWinner(gameModel.getCurrentPlayer());
-                } else if (checkDrawState()) {
+                if (checkDrawState()) {
                     gameModel.setGameDrawn();
+                } else if (checkWinState(rows, columns)) {
+                    gameModel.setWinner(gameModel.getCurrentPlayer());
                 } else {
                     if (gameModel.getCurrentPlayer() == gameModel.getPlayerByNumber(gameModel.getNumberOfPlayers() - 1)) {
                         playerTurnCount = 0;
@@ -81,10 +81,12 @@ class OXOController
         int rowCnt = 0, matches = 0;
 
         for (int i = 0; i < gameModel.getNumberOfRows(); i++) {
-            if (gameModel.getRow(rows).get(i) == gameModel.getCurrentPlayer()) {
-                if (++matches == gameModel.getWinThreshold()) return true;
-            } else {
+            if (gameModel.getRow(rows).get(i) != gameModel.getCurrentPlayer()) {
                 matches = 0;
+            } else {
+                if (++matches == gameModel.getWinThreshold()) {
+                    return true;
+                }
             }
         }
         return false;
@@ -95,10 +97,12 @@ class OXOController
         int colCnt = 0, matches = 0;
 
         for (int i = 0; i < gameModel.getNumberOfColumns(); i++) {
-            if (gameModel.getRow(i).get(columns) == gameModel.getCurrentPlayer()) {
-                if (++matches == gameModel.getWinThreshold()) return true;
-            } else {
+            if (gameModel.getRow(i).get(columns) != gameModel.getCurrentPlayer()) {
                 matches = 0;
+            } else {
+                if (++matches == gameModel.getWinThreshold()) {
+                    return true;
+                }
             }
         }
         return false;
