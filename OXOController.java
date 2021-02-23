@@ -3,7 +3,7 @@ import OXOExceptions.*;
 class OXOController
 {
     OXOModel gameModel;
-    int playerTurnCount, matches, turns;
+    private int playerTurnCount, matches = 0, turns = 0;
 
     public OXOController(OXOModel model)
     {
@@ -68,9 +68,6 @@ class OXOController
 
     private boolean checkWinRow(int rows)
     {
-        matches = 0;
-        turns = 0;
-
         while (turns < gameModel.getNumberOfRows()) {
             if (gameModel.getRow(rows).get(turns) != gameModel.getCurrentPlayer()) {
                 matches = 0;
@@ -81,9 +78,6 @@ class OXOController
     }
 
     private boolean checkWinCol(int columns) {
-        matches = 0;
-        turns = 0;
-
         while (turns < gameModel.getNumberOfColumns()) {
             if (gameModel.getRow(turns).get(columns) != gameModel.getCurrentPlayer()) {
                 matches = 0;
@@ -96,7 +90,6 @@ class OXOController
     private boolean checkWinDiagonal(int rows, int columns)
     {
         int squareSize = Math.min(gameModel.getNumberOfColumns(), gameModel.getNumberOfRows());
-        matches = 0;
 
         if (columns == rows) {
             int turns = 0;
@@ -115,9 +108,8 @@ class OXOController
     private boolean checkWinAntiDiagonal(int rows, int columns)
     {
         int squareSize = Math.min(gameModel.getNumberOfColumns(), gameModel.getNumberOfRows());
-        matches = 0;
 
-        if (columns  +rows == squareSize - 1) {
+        if (columns + rows == squareSize - 1) {
             int turns = 0;
             while (turns < squareSize) {
                 if (gameModel.getRow(turns).get((squareSize - 1) - turns) == gameModel.getCurrentPlayer()) {
@@ -131,16 +123,13 @@ class OXOController
         return false;
     }
 
-    // CHANGE BELOW !!!!!!!!!!!!!!!!!!!!!!!!!!
-
     private boolean checkDrawState()
     {
         for (int i = 0; i < gameModel.getNumberOfRows(); i++) {
             for (int j = 0; j < gameModel.getNumberOfColumns(); j++) {
-                if (gameModel.getCellOwner(i,j)==null) return false;
+                if (gameModel.getCellOwner(i,j) == null) return false;
             }
         }
-
         return true;
     }
 }
