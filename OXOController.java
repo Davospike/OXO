@@ -3,7 +3,7 @@ import OXOExceptions.*;
 class OXOController
 {
     OXOModel gameModel;
-    int playerTurnCount;
+    int playerTurnCount, matches, turns;
 
     public OXOController(OXOModel model)
     {
@@ -62,25 +62,28 @@ class OXOController
 
     private boolean checkWinState(int rows, int columns)
     {
-        return (checkWinRowCol(rows, columns) || checkWinDiagonal(rows, columns));
+        return (checkWinRow(rows) || checkWinCol(columns) || checkWinDiagonal(rows, columns) ||
+                checkWinAntiDiagonal(rows, columns));
     }
 
-    private boolean checkWinRowCol(int rows, int columns)
+    private boolean checkWinRow(int rows)
     {
-        int matches = 0;
+        matches = 0;
+        turns = 0;
 
-        // Rows
-        int turns = 0;
         while (turns < gameModel.getNumberOfRows()) {
             if (gameModel.getRow(rows).get(turns) != gameModel.getCurrentPlayer()) {
                 matches = 0;
             } else if (++matches == gameModel.getWinThreshold()) return true;
             turns++;
         }
+        return false;
+    }
 
-        // Columns
+    private boolean checkWinCol(int columns) {
         matches = 0;
         turns = 0;
+
         while (turns < gameModel.getNumberOfColumns()) {
             if (gameModel.getRow(turns).get(columns) != gameModel.getCurrentPlayer()) {
                 matches = 0;
@@ -92,11 +95,9 @@ class OXOController
 
     private boolean checkWinDiagonal(int rows, int columns)
     {
-        int matches;
-        int squareSize = Math.min(gameModel.getNumberOfColumns(),gameModel.getNumberOfRows());
-
-        //Diagonal
+        int squareSize = Math.min(gameModel.getNumberOfColumns(), gameModel.getNumberOfRows());
         matches = 0;
+
         if (columns == rows) {
             int turns = 0;
             while (turns < squareSize) {
@@ -108,13 +109,18 @@ class OXOController
                 turns++;
             }
         }
+        return false;
+    }
 
-        //Anti-Diagonal
+    private boolean checkWinAntiDiagonal(int rows, int columns)
+    {
+        int squareSize = Math.min(gameModel.getNumberOfColumns(), gameModel.getNumberOfRows());
         matches = 0;
-        if (columns+rows == squareSize-1) {
+
+        if (columns  +rows == squareSize - 1) {
             int turns = 0;
             while (turns < squareSize) {
-                if (gameModel.getRow(turns).get((squareSize-1) - turns) == gameModel.getCurrentPlayer()) {
+                if (gameModel.getRow(turns).get((squareSize - 1) - turns) == gameModel.getCurrentPlayer()) {
                     if (++matches == gameModel.getWinThreshold()) return true;
                 } else {
                     matches = 0;
