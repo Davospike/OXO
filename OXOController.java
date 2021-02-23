@@ -80,15 +80,12 @@ class OXOController
     {
         int rowCnt = 0, matches = 0;
 
-        while (rowCnt < gameModel.getNumberOfRows()) {
-            if (gameModel.getRow(rows).get(rowCnt) == gameModel.getCurrentPlayer()) {
-                if (++matches == gameModel.getWinThreshold()) {
-                    return true;
-                }
+        for (int i = 0; i < gameModel.getNumberOfRows(); i++) {
+            if (gameModel.getRow(rows).get(i) == gameModel.getCurrentPlayer()) {
+                if (++matches == gameModel.getWinThreshold()) return true;
             } else {
                 matches = 0;
             }
-            rowCnt++;
         }
         return false;
     }
@@ -97,15 +94,12 @@ class OXOController
     {
         int colCnt = 0, matches = 0;
 
-        while (colCnt < gameModel.getNumberOfColumns()) {
-            if (gameModel.getRow(colCnt).get(columns) == gameModel.getCurrentPlayer()) {
-                if (++matches == gameModel.getWinThreshold()) {
-                    return true;
-                }
+        for (int i = 0; i < gameModel.getNumberOfColumns(); i++) {
+            if (gameModel.getRow(i).get(columns) == gameModel.getCurrentPlayer()) {
+                if (++matches == gameModel.getWinThreshold()) return true;
             } else {
                 matches = 0;
             }
-            colCnt++;
         }
         return false;
     }
