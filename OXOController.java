@@ -10,7 +10,6 @@ class OXOController
     private final int gridSize;
     private final int colMax;
     private final int rowMax;
-    private boolean winSet = false;
 
     public OXOController(OXOModel model)
     {
@@ -28,7 +27,7 @@ class OXOController
         int rows;
         int columns;
 
-        if (!gameModel.isGameDrawn() && !winSet) {
+        if (!gameModel.isGameDrawn() && gameModel.getWinner() == null) {
             command = command.toLowerCase();
             if (command.length() != 2) {
                 throw new InvalidIdentifierLengthException(colMax, rowMax);
@@ -51,7 +50,6 @@ class OXOController
                 gameModel.setCellOwner(rows, columns, gameModel.getCurrentPlayer());
                 if (checkWinState(rows, columns)) {
                     gameModel.setWinner(gameModel.getCurrentPlayer());
-                    winSet = true;
                 } else if (checkDrawState()) {
                     gameModel.setGameDrawn();
                 } else {
