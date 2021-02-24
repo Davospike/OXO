@@ -1,7 +1,5 @@
 import OXOExceptions.*;
 
-import java.util.stream.IntStream;
-
 class OXOController
 {
     OXOModel gameModel;
