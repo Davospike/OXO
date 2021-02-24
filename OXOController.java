@@ -70,8 +70,12 @@ class OXOController
 
     private boolean checkDrawState()
     {
-        return IntStream.range(0, gameModel.getNumberOfRows()).noneMatch(i ->
-               IntStream.range(0, gameModel.getNumberOfColumns()).anyMatch(j -> gameModel.getCellOwner(i, j) == null));
+        for (int i = 0; i < rowMax; i++) {
+            for (int j = 0; j < colMax; j++) {
+                if (gameModel.getCellOwner(i,j)==null) return false;
+            }
+        }
+        return true;
     }
 
     private boolean checkWinState(int rows, int columns)
