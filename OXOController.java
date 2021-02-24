@@ -5,7 +5,12 @@ import java.util.stream.IntStream;
 class OXOController
 {
     OXOModel gameModel;
-    private int playerTurnCount, playerTotal, gridSize;
+    private int playerTurnCount;
+    private final int playerTotal;
+    private final int gridSize;
+    private final int colMax;
+    private final int rowMax;
+    private boolean winSet = false;
 
     public OXOController(OXOModel model)
     {
@@ -14,6 +19,8 @@ class OXOController
         playerTotal = gameModel.getNumberOfPlayers();
         gridSize = gameModel.getNumberOfRows() * gameModel.getNumberOfColumns();
         gameModel.setCurrentPlayer(gameModel.getPlayerByNumber(playerTurnCount));
+        colMax = gameModel.getNumberOfColumns();
+        rowMax = gameModel.getNumberOfRows();
     }
 
     public void handleIncomingCommand(String command) throws OXOMoveException
@@ -21,20 +28,18 @@ class OXOController
         int rows;
         int columns;
 
-        command = command.toLowerCase();
-
-        if (command.length() != 2) {
-            throw new OXOMoveException(); // CHANGE TO CORRECT EXCEPTION - invalid identifier
-        } else if (!Character.isLetter(command.charAt(0))) {
-            throw new OXOMoveException(); // CHANGE TO CORRECT EXCEPTION - invalid identifier character
-        } else if (!Character.isDigit(command.charAt(1))) {
-            throw new OXOMoveException(); // CHANGE TO CORRECT EXCEPTION - invalid identifier length
-        } else {
-            rows = Character.getNumericValue(command.charAt(0)) - Character.getNumericValue('a');
-            columns = Character.getNumericValue(command.charAt(1)) - 1;
-        }
-
-        if (!gameModel.isGameDrawn() || gameModel.getWinner() == null) { // Attempting to make it so no input can be entered once the game is won/tied
+        if (!gameModel.isGameDrawn() && !winSet) {
+            command = command.toLowerCase();
+            if (command.length() != 2) {
+                throw new InvalidIdentifierLengthException(colMax, rowMax);
+            } else if (!Character.isLetter(command.charAt(0))) {
+                throw new InvalidIdentifierCharacterException(colMax, rowMax);
+            } else if (!Character.isDigit(command.charAt(1))) {
+                throw new InvalidIdentifierCharacterException(colMax, rowMax);
+            } else {
+                rows = Character.getNumericValue(command.charAt(0)) - Character.getNumericValue('a');
+                columns = Character.getNumericValue(command.charAt(1)) - 1;
+            }
             executeGame(rows, columns);
         }
     }
@@ -46,6 +51,7 @@ class OXOController
                 gameModel.setCellOwner(rows, columns, gameModel.getCurrentPlayer());
                 if (checkWinState(rows, columns)) {
                     gameModel.setWinner(gameModel.getCurrentPlayer());
+                    winSet = true;
                 } else if (checkDrawState()) {
                     gameModel.setGameDrawn();
                 } else {
@@ -57,10 +63,10 @@ class OXOController
                     gameModel.setCurrentPlayer(gameModel.getPlayerByNumber(playerTurnCount));
                 }
             } else {
-                throw new OXOMoveException(); // CHANGE TO CORRECT EXCEPTION - cell already taken
+                throw new CellAlreadyTakenException(rows, columns);
             }
         } else {
-            throw new OXOMoveException(); // CHANGE TO CORRECT EXCEPTION - outside cell range
+            throw new OutsideCellRangeException(rows, columns, colMax, rowMax);
         }
     }
 
@@ -79,8 +85,8 @@ class OXOController
     private boolean checkWinRow(int rows)
     {
         int matches = 0;
-
         int rowCnt = 0;
+
         while (rowCnt < gameModel.getNumberOfRows()) {
             if (gameModel.getRow(rows).get(rowCnt) != gameModel.getCurrentPlayer()) {
                 matches = 0;
@@ -97,8 +103,8 @@ class OXOController
     private boolean checkWinCol(int columns)
     {
         int matches = 0;
-
         int colCnt = 0;
+
         while (colCnt < gameModel.getNumberOfColumns()) {
             if (gameModel.getRow(colCnt).get(columns) != gameModel.getCurrentPlayer()) {
                 matches = 0;
