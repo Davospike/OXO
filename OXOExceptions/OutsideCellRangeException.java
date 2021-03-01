@@ -1,6 +1,6 @@
 package OXOExceptions;
 
-public class OutsideCellRangeException extends OXOMoveException
+public class OutsideCellRangeException extends CellDoesNotExistException
 {
     private final int row;
     private final int column;
@@ -9,6 +9,7 @@ public class OutsideCellRangeException extends OXOMoveException
 
     public OutsideCellRangeException(int rows, int columns, int colMaximum, int rowMaximum)
     {
+        super();
         row = rows;
         column = columns;
         colMax = colMaximum;

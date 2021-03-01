@@ -1,12 +1,13 @@
 package OXOExceptions;
 
-public class InvalidIdentifierCharacterException extends OXOMoveException
+public class InvalidIdentifierCharacterException extends InvalidIdentifierException
 {
     private final int colMax;
     private final int rowMax;
 
     public InvalidIdentifierCharacterException(int colMaximum, int rowMaximum)
     {
+        super();
         colMax = colMaximum;
         rowMax = rowMaximum;
     }
