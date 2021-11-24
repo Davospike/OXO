@@ -1,4 +1,18 @@
 # OXO
-Simple adaption of Tic Tac Toe, handles any size board and number of players.
+Simple adaption of Tic Tac Toe.
 
-This work was submitted for the Object Oriented Programming with Java module at the University of Bristol. Please note that no student can use this work without permission, or attempt to pass this work off as their own.
+##  Usage
+```
+$ java OXOGame
+```
+
+Once the board appears on the screen, commands in the form of coordinates can be entered into the GUI e.g.:
+
+```
+$ a1
+```
+or 
+```
+$ a2
+```
+with each alternate turn passing to the next player automatically.
